@@ -1,29 +1,35 @@
 import React, { useState } from "react"
 
-const Form = () => {
+const Form = ({ setTransactions, transactions }) => {
+	const [price, setPrice] = useState("")
 	const [name, setName] = useState("")
 	const [dateTime, setDateTime] = useState("")
 	const [description, setDescription] = useState("")
 
 	function handleNewTransaction(ev) {
 		ev.preventDefault()
+
+		const sanitizedPrice = price.replace(/[^0-9.-]/g, "")
+
 		const url = import.meta.env.VITE_APP_API_URL + "/transaction"
-		const price = name.split(" ")[0]
 		fetch(url, {
 			method: "POST",
 			headers: { "Content-type": "application/json" },
 			body: JSON.stringify({
-				price,
-				name: name.substring(price.length + 1),
+				price: parseFloat(sanitizedPrice),
+				name,
 				description,
 				dateTime,
 			}),
 		}).then((response) => {
-			response.json().then((json) => {
+			response.json().then((newTransaction) => {
+				setPrice("")
 				setName("")
 				setDateTime("")
 				setDescription("")
-				console.log("result", json)
+				setTransactions([...transactions, newTransaction])
+
+				console.log("result", newTransaction)
 			})
 		})
 	}
@@ -33,6 +39,8 @@ const Form = () => {
 			<div className='gap-[5px] mb-[5px]'>
 				<input
 					type='text'
+					value={price}
+					onChange={(ev) => setPrice(ev.target.value)}
 					placeholder='+200'
 					className='w-full border-[2px] border-[#30313d] py-[2px] px-[5px] mb-2 bg-transparent rounded-lg text-[#ddd] '></input>
 				<input

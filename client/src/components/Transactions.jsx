@@ -1,6 +1,21 @@
 import React from "react"
 
-const Transactions = ({ transactions }) => {
+const Transactions = ({ transactions, setTransactions }) => {
+	async function handleDelete(id) {
+		const url = `${import.meta.env.VITE_APP_API_URL}/transaction/${id}`
+		const response = await fetch(url, {
+			method: "DELETE",
+		})
+		if (response.ok) {
+			// Remove the deleted transaction from the local state
+			setTransactions((prevTransactions) =>
+				prevTransactions.filter((transaction) => transaction._id !== id)
+			)
+		} else {
+			console.error("Failed to delete the transaction")
+		}
+	}
+
 	return (
 		<div className='transactions mt-[15px] text-[#ddd]'>
 			{transactions.length > 0 &&
@@ -24,11 +39,11 @@ const Transactions = ({ transactions }) => {
 									{transaction.price}
 								</div>
 								<div className='datetime text-[0.9rem] text-[#888]'>
-									2024-08-19 15:45
+									{new Date(transaction.dateTime).toLocaleString()}
 								</div>
 							</div>
 
-							<div>
+							<div onClick={() => handleDelete(transaction._id)}>
 								<svg
 									xmlns='http://www.w3.org/2000/svg'
 									fill='none'

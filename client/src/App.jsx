@@ -19,8 +19,11 @@ function App() {
 	return (
 		<main className='box-border	max-w-[360px] m-[30px] m-auto'>
 			<Balance transactions={transactions} />
-			<Form />
-			<Transactions transactions={transactions} />
+			<Form transactions={transactions} setTransactions={setTransactions} />
+			<Transactions
+				transactions={transactions}
+				setTransactions={setTransactions}
+			/>
 		</main>
 	)
 }
